@@ -11,7 +11,7 @@ describe('Post Endpoints', () => {
                 age: 28,
                 email: "cuong@vn.com",
                 comment: "production made me sad",
-                phoneNumber: ""
+                phoneNumber: "0934177324"
             });
         expect(res.statusCode).toEqual(201);
         expect(res.body.status).toEqual('Success');
