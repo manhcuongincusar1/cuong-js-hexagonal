@@ -24,4 +24,10 @@ cuong minimum starter http server with js - event driven architecture
     phoneNumber: "0934177324"
 }
 
-- https://localhost:8080/api/v1/users GET (Get all comment)
+- https://localhost:8080/api/v1/users GET (Get all user comments)
+
+
+## Deployment:
+
+- Step 1 containerize package
+- Step 2 compose image with: this package and postgres
