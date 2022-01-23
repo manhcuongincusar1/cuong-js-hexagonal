@@ -1,0 +1,11 @@
+port: 8080
+db:
+    pg:
+        -   enabled: true
+            host: localhost
+            port: 5432
+            username: nguyencuong
+            password: ""
+            database: demo
+            nameconn: connPg 
+            lang: ES

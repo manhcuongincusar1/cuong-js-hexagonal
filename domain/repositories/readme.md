@@ -1,0 +1,1 @@
+# start connection, abstract db server, add entity schema like user
