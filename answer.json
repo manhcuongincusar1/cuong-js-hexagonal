@@ -1,0 +1,13 @@
+[{
+        "questionId": 1,
+        "value": "hcmc"
+    },
+    {
+        "questionId": 2,
+        "value": 28
+    },
+    {
+        "questionId": 3,
+        "value": ["handsome", "rich", "good health"]
+    }
+]

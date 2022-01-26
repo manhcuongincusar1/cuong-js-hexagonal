@@ -1,6 +1,6 @@
 const log = require('../../util/log');
 const enum_ = require('../../util/enum');
-const ormUser = require('../orm/orm-user');
+const ormForm = require('../orm/orm-form');
 const { isUuid } = require('uuidv4');
 
 
@@ -12,7 +12,8 @@ exports.GetAll = async(req, res) => {
         statusCode = 0,
         resp = {};
     try {
-        respOrm = await ormUser.GetAll();
+        respOrm = await ormForm.GetAll();
+        console.log("respOrm: ", respOrm)
         if (respOrm.err) {
             status = 'Failure', errorCode = respOrm.err.code, message = respOrm.err.messsage, statusCode = enum_.CODE_BAD_REQUEST;
         } else {
@@ -34,22 +35,14 @@ exports.Store = async(req, res) => {
         statusCode = 0,
         resp = {};
     try {
-        const {
-            firstName,
-            lastName,
-            age,
-            email,
-            phoneNumber,
-            comment
-        } = req.body
-            // todo validation
-        if (firstName && lastName && age && email) {
-            respOrm = await ormUser.Store(firstName,
-                lastName,
-                age,
-                email,
-                phoneNumber,
-                comment);
+        const { title, description, language, questions, authorizedMode, creatorId } = req.body
+
+        // Validation
+        // TODO: check if creator is authorized to create a form
+        // TODO: validate form questions
+        if (title && description && language && questions && authorizedMode && creatorId) {
+            respOrm = await ormForm.Store(title, description, language, questions, authorizedMode, creatorId);
+            console.log("respOrm: ", respOrm)
             if (respOrm.err) {
                 status = 'Failure', errorCode = respOrm.err.code, message = respOrm.err.messsage, statusCode = enum_.CODE_BAD_REQUEST;
             } else {

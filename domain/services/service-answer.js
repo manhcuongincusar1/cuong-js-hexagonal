@@ -1,7 +1,9 @@
 const log = require('../../util/log');
 const enum_ = require('../../util/enum');
-const ormUser = require('../orm/orm-user');
-const { isUuid } = require('uuidv4');
+const ormAnswer = require('../orm/orm-answer');
+const ormForm = require('../orm/orm-form');
+const { validateConstraint } = require('../../util/formConstraintValidate');
+
 
 
 exports.GetAll = async(req, res) => {
@@ -12,7 +14,7 @@ exports.GetAll = async(req, res) => {
         statusCode = 0,
         resp = {};
     try {
-        respOrm = await ormUser.GetAll();
+        respOrm = await ormAnswer.GetAll();
         if (respOrm.err) {
             status = 'Failure', errorCode = respOrm.err.code, message = respOrm.err.messsage, statusCode = enum_.CODE_BAD_REQUEST;
         } else {
@@ -34,22 +36,36 @@ exports.Store = async(req, res) => {
         statusCode = 0,
         resp = {};
     try {
-        const {
-            firstName,
-            lastName,
-            age,
-            email,
-            phoneNumber,
-            comment
-        } = req.body
-            // todo validation
-        if (firstName && lastName && age && email) {
-            respOrm = await ormUser.Store(firstName,
-                lastName,
-                age,
-                email,
-                phoneNumber,
-                comment);
+        const { userId, formId, answers } = req.body
+
+        // // Validation
+        // // Get form 
+        // if (!formId) {
+        //     return res.status(enum_.CODE_BAD_REQUEST).send(await log.ResponseService('Failure', enum_.ID_NOT_FOUND, 'err', ''));
+        // }
+        // const form = await ormForm.GetById(formId)
+
+        // // If form authorizedMode != anonymous --> check userId
+        // if (form.authorizedMode != "anonymous" && !userId) {
+        //     return res.status(enum_.CODE_BAD_REQUEST).send(await log.ResponseService('Failure', enum_.ERROR_REQUIRED_FIELD, 'err', ''));
+        // }
+
+        // // Check if answer valid to form meta data
+        // if (answers && Array.isArray(answers) == true) {
+        //     answers.forEach(answer => {
+        //         question = form.questions[`${answer.questionId}`]
+        //         if (!question) {
+        //             return res.status(enum_.CODE_BAD_REQUEST).send(await log.ResponseService('Failure', enum_.ERROR_REQUIRED_FIELD, 'err', ''));
+        //         }
+        //         const error = validateConstraint(question, answer.value)
+        //         if (error) {
+        //             return res.status(enum_.CODE_BAD_REQUEST).send(await log.ResponseService('Failure', enum_.ERROR_REQUIRED_FIELD, 'err', ''));
+        //         }
+        //     });
+        // }
+
+        if (formId && answers) {
+            respOrm = await ormAnswer.Store(userId, formId, answers);
             if (respOrm.err) {
                 status = 'Failure', errorCode = respOrm.err.code, message = respOrm.err.messsage, statusCode = enum_.CODE_BAD_REQUEST;
             } else {

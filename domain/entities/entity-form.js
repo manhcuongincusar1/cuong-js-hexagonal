@@ -1,36 +1,44 @@
-class User {
+// FORM
+// id
+// title
+// description
+// language
+// questions: json
+// authorizedMode: anonymos, auth
+// creatorId
+// createdAt
+// updatedAt
 
+//JSON questions
+const enum_ = require('../../util/log');
+
+class Form {
     constructor(db) {
         this.db = db
     }
-
-    tableName = "users"
-
-    newUser(firstName, lastName, age, email, phoneNumber, comment) {
+    newForm(title, description, language, questions, authorizedMode, creatorId) {
         return {
-            firstName,
-            lastName,
-            age,
-            email,
-            phoneNumber,
-            comment
+            title,
+            description,
+            language,
+            questions,
+            authorizedMode,
+            creatorId
         }
     }
+    tableName = "forms"
     async createOrAlterTable() {
-        console.log("this.db.connPg.conn.schema: ", this.db.connPg.conn.schema)
         try {
             const exist = await this.db.connPg.conn.schema.hasTable(this.tableName);
-            console.log("hasTable users resp: ", exist)
             let res
             if (exist) {
                 res = await this.db.connPg.conn.schema.alterTable(this.tableName, table => {
                     table.increments("id").primary();
-                    table.text("firstName", 100);
-                    table.text("lastName", 100);
-                    table.integer("age");
-                    table.text("email");
-                    table.text("comment");
-                    table.text("phoneNumber");
+                    table.text("title");
+                    table.text("description");
+                    table.text("language");
+                    table.json("questions");
+                    table.text("authorizedMode"); // not null
                     table.boolean("isDeleted").defaultTo(false);
                     table.timestamp('createdAt').defaultTo(this.db.connPg.conn.fn.now())
                     table.timestamp("updatedAt");
@@ -38,52 +46,45 @@ class User {
             } else {
                 res = await this.db.connPg.conn.schema.createTable(this.tableName, table => {
                     table.increments("id").primary();
-                    table.text("firstName", 100);
-                    table.text("lastName", 100);
-                    table.integer("age");
-                    table.text("email");
-                    table.text("comment");
-                    table.text("phoneNumber");
+                    table.integer("creatorId");
+                    table.text("title");
+                    table.text("description");
+                    table.text("language");
+                    table.json("questions");
+                    table.text("authorizedMode"); // not null
                     table.boolean("isDeleted").defaultTo(false);
                     table.timestamp('createdAt').defaultTo(this.db.connPg.conn.fn.now())
                     table.timestamp("updatedAt");
                 });
             }
-            console.log("res from create database: ", res)
         } catch (err) {
-            console.log(" err entity-user.createTable = ", err);
             return await { err: { code: 123, messsage: err } }
         }
     }
-    async store(user) {
+    async store(form) {
+        // insert
         try {
-            const userRes = await this.db.connPg.conn.table("users")
-                .insert({
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    age: user.age,
-                    email: user.email,
-                    phoneNumber: user.phoneNumber,
-                    comment: user.comment,
-                })
+            const res = await this.db.connPg.conn.table(this.tableName)
+                .insert(form)
                 .returning("*");
-            if (userRes.length() > 0) {
-                console.log("Insert User Success: ", userRes[0])
+            // log
+            if (res.length() > 0) {
+                console.log("Insert form Success: ", res[0])
             } else {
-                console.log("Insert User Fail: ", userRes)
+                console.log("Insert form Fail: ", res)
             }
         } catch (err) {
-            console.log(" err entity-user.store = ", err);
+            console.log(" err entity-form.store = ", err);
             return await { err: { code: 123, messsage: err } }
         }
     }
     async find(option) {
         try {
-            return await this.db.connPg.conn.table("users")
+            return await this.db.connPg.conn.table(this.tableName)
                 .select("*")
                 .where(option ? option : {});
         } catch (err) {
-            console.log(" err entity-user.findAll = ", err);
+            console.log(" err entity-form.findAll = ", err);
             return await { err: { code: 123, messsage: err } }
         }
     }
@@ -96,7 +97,7 @@ class User {
 
 module.exports = (db) => {
     try {
-        schema = new User(db);
+        schema = new Form(db);
         !async function() {
             console.log("Start to run createTable")
             await schema.createOrAlterTable()

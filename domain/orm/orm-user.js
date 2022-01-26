@@ -12,8 +12,6 @@ exports.GetAll = async() => {
 }
 
 exports.Store = async(firstName, lastName, age, email, phoneNumber, comment) => {
-    console.log("conn.db.connPg.User: ",
-        conn.db.connPg.User.newUser)
     insertedUser = conn.db.connPg.User.newUser(firstName,
         lastName,
         age,
