@@ -1,0 +1,33 @@
+{
+    "1": {
+        "type": "short-text",
+        "title": "where do you live?",
+        "description": "tell us exactly house number",
+        "constraint": {
+            "isRequired": true
+        }
+    },
+    "2": {
+        "id": 2,
+        "type": "number",
+        "title": "How old are you?",
+        "isRequired": true,
+        "description": "must under 150",
+        "constraint": {
+            "isRequired": true,
+            "range": [0, 150]
+        }
+    },
+    "3": {
+        "id": 3,
+        "type": "option",
+        "title": "Please choose 3 phrase that most matched with you:",
+        "description": "",
+        "constraint": {
+            "isRequired": true,
+            "in": ["handsome", "rich"],
+            "numberOfAnswers": ["none", 3],
+            "type": "array"
+        }
+    }
+}
